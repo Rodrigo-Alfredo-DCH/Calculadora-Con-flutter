@@ -8,6 +8,7 @@ class Memoria {
   bool _wipeValor = false;
 
   void applyCommand(String comando) {
+    print("Comando recibido: $comando"); // Para depurar
     if (comando == 'AC') {
       _limpiarTodoAC();
     } else if (operaciones.contains(comando)) {
@@ -18,20 +19,24 @@ class Memoria {
   }
 
   void _setOperacion(String nuevaOperacion) {
-    if (_buffer[0] == 0) {
-      _operacion = nuevaOperacion;
-      _bufferIndex = 1;
-      _wipeValor = true;
-    } else {
+    // Si ya había una operación activa y estamos en el segundo número
+    if (_operacion != null && _bufferIndex == 1) {
       _buffer[0] = _calcular();
-      _buffer[1] = 0.0;
       _valor = _buffer[0].toString();
       _valor = _valor.endsWith('.0') ? _valor.split('.')[0] : _valor;
+    } else {
+      // Primer número ingresado
+      _buffer[0] = double.tryParse(_valor) ?? 0.0;
+    }
 
-      bool isEqualSign = nuevaOperacion == '=';
-      _operacion = isEqualSign ? null : nuevaOperacion;
-      _bufferIndex = isEqualSign ? 0 : 1;
-      _wipeValor = !isEqualSign;
+    bool esIgual = nuevaOperacion == '=';
+
+    _operacion = esIgual ? null : nuevaOperacion;
+    _bufferIndex = esIgual ? 0 : 1;
+    _wipeValor = true;
+
+    if (esIgual) {
+      _buffer[1] = 0.0;
     }
   }
 
@@ -49,7 +54,7 @@ class Memoria {
     _valor = currentValor + digito;
     _wipeValor = false;
 
-    _buffer[_bufferIndex] = double.tryParse(_valor) ?? 0;
+    _buffer[_bufferIndex] = double.tryParse(_valor) ?? 0.0;
   }
 
   double _calcular() {
@@ -78,7 +83,5 @@ class Memoria {
     _wipeValor = false;
   }
 
-  String get valor {
-    return _valor;
-  }
+  String get valor => _valor;
 }

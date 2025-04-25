@@ -23,7 +23,7 @@ class _CalculadoraState extends State<Calculadora> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       home: Column(
-        children: <Widget>[Display('memoria.valor'), Teclado(_onPressed)],
+        children: <Widget>[Display(memoria.valor), Teclado(_onPressed)],
       ),
     );
   }
